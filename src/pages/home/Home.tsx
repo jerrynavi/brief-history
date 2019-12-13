@@ -1,73 +1,59 @@
 import React, { Component } from 'react';
 import styles from './Home.module.scss';
 import Helmet from 'react-helmet';
-import faker from 'faker';
-import { Typography, Button, Row, Col } from 'antd';
+import { Typography, Carousel, Button, Icon } from 'antd';
 import moment from 'moment';
 import { RouteComponentProps } from 'react-router';
 import { State } from '../../interfaces/State';
 import { AnyAction } from '@reduxjs/toolkit';
-import { actions } from '../../utils';
 import { connect } from 'react-redux';
 
 const { Title } = Typography;
 
-interface User {
-    name: string;
-    age: string;
-    nickname: string;
-}
+declare let state: State;
 
-interface HomeProps extends RouteComponentProps {
+interface HomeProps extends RouteComponentProps, State {
     dispatch(args: AnyAction): void;
-    data: any;
 }
 
 class Home extends Component<HomeProps> {
 
-    generateFakeUser = (): User => {
-        const user: User = {
-            name: faker.name.firstName() + ' ' + faker.name.lastName(),
-            nickname: faker.internet.userName(),
-            age: moment(faker.date.past(800)).format('MMMM DD, YYYY')
-        };
-
-        return user;
-    }
-
-    updateData = (): void => {
-        this.props.dispatch({
-            type: actions.CUSTOM_DATA_UPDATE,
-            payload: this.generateFakeUser()
-        });
-    }
-
     componentDidMount = (): void => {
-        this.updateData();
+        // to do
     }
+
+    slider?: Carousel;
 
     render(): JSX.Element {
-        const { data }: { data: User } = this.props;
         return (
             <>
                 <Helmet>
-                    <title>React Redux Template</title>
+                    <title>A Brief History...</title>
                 </Helmet>
                 <div className={styles.home}>
-                    <Row>
-                        <Col lg={{ span: 12, offset: 6 }}>
-                            <Title level={3}>Hello {data?.nickname}!</Title>
-                            <p>From today, you shall be called {data?.name}. Also you were born on {data?.age}</p>
-                            <Button type="primary" shape="round" size="large" onClick={this.updateData}>Change details</Button>
-                        </Col>
-                    </Row>
+                    <div className={styles.content}>
+                        <Carousel
+                            ref={(c): any => {this.slider = c as Carousel; }}
+                            dots={false}
+                            fade={true}
+                            slidesToShow={1}
+                            slidesToScroll={1}
+                        >
+                            <div className={styles.sliderDiv} id={styles.intro}>
+                                <Button type="primary" onClick={(): void => this.slider?.next()}>
+                                    Start
+                                    <Icon type="arrow-right" />
+                                </Button>
+                            </div>
+                        </Carousel>
+                    </div>
                 </div>
             </>
         );
     }
 }
 
-const mapProps = (state: State): { data: any } => {
+const mapProps = (state: State): State => {
     return {
         ...state
     };

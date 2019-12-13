@@ -1,3 +1,5 @@
 export interface State {
-    data: any;
+    app: {
+        currentPage?: number;
+    };
 }
